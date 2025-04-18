@@ -87,13 +87,45 @@ class StudentManager {
         System.out.println("Student deleted successfully: " + student);
     }
 
-    // Sắp xếp danh sách sinh viên theo điểm (giảm dần)
-    public void sortStudentsByMarks() {
-        Collections.sort(students, Comparator.comparingDouble(Student::getMarks).reversed());
-        System.out.println("Students sorted by marks:");
-        displayStudents();
-    }
+   // Sắp xếp danh sách sinh viên theo điểm (giảm dần) bằng Quick Sort
+public void sortStudentsByMarks() {
+    quickSort(students, 0, students.size() - 1);
+    System.out.println("Students sorted by marks:");
+    displayStudents();
+}
 
+// Triển khai Quick Sort
+private void quickSort(ArrayList<Student> list, int low, int high) {
+    if (low < high) {
+        int pi = partition(list, low, high);
+        quickSort(list, low, pi - 1);
+        quickSort(list, pi + 1, high);
+    }
+}
+
+// Phân hoạch cho Quick Sort, sắp xếp giảm dần theo điểm, nếu điểm bằng nhau thì theo ID
+private int partition(ArrayList<Student> list, int low, int high) {
+    double pivotMarks = list.get(high).getMarks();
+    String pivotId = list.get(high).getId(); // Tiêu chí phụ khi điểm bằng nhau
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        double currentMarks = list.get(j).getMarks();
+        String currentId = list.get(j).getId();
+        // Sắp xếp giảm dần: điểm lớn hơn hoặc (điểm bằng nhau và ID nhỏ hơn theo chữ cái)
+        if (currentMarks > pivotMarks || (currentMarks == pivotMarks && currentId.compareTo(pivotId) <= 0)) {
+            i++;
+            // Hoán đổi phần tử
+            Student temp = list.get(i);
+            list.set(i, list.get(j));
+            list.set(j, temp);
+        }
+    }
+    // Đặt pivot vào đúng vị trí
+    Student temp = list.get(i + 1);
+    list.set(i + 1, list.get(high));
+    list.set(high, temp);
+    return i + 1;
+}
     // Tìm kiếm nhị phân theo điểm (giả sử danh sách đã sắp xếp)
     public Student binarySearchByMarks(double targetMarks) {
         int left = 0;
